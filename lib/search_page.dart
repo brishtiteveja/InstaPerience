@@ -10,10 +10,11 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPage extends State<SearchPage> with AutomaticKeepAliveClientMixin<SearchPage>{
   Future<QuerySnapshot> userDocs;
+  String searchName;
 
   buildSearchField() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.lightBlueAccent,
       title: Form(
         child: TextFormField(
           decoration: InputDecoration(labelText: 'Search for a user...'),
@@ -26,11 +27,15 @@ class _SearchPage extends State<SearchPage> with AutomaticKeepAliveClientMixin<S
   ListView buildSearchResults(List<DocumentSnapshot> docs) {
     List<UserSearchItem> userSearchItems = [];
 
-    docs.forEach((DocumentSnapshot doc) {
+    for(int i=0; i < docs.length; i++) {
+      DocumentSnapshot doc = docs[i];
       User user = User.fromDocument(doc);
+      if (!user.username.toLowerCase().contains(searchName.toLowerCase()))
+        continue;
+
       UserSearchItem searchItem = UserSearchItem(user);
       userSearchItems.add(searchItem);
-    });
+    }
 
     return ListView(
       children: userSearchItems,
@@ -38,10 +43,11 @@ class _SearchPage extends State<SearchPage> with AutomaticKeepAliveClientMixin<S
   }
 
   void submit(String searchValue) async {
-    Future<QuerySnapshot> users = Firestore.instance
-        .collection("insta_users")
-        .where('displayName', isGreaterThanOrEqualTo: searchValue)
-        .getDocuments();
+    searchName = searchValue;
+    CollectionReference userCollection = Firestore.instance
+        .collection("insta_users");
+    Future<QuerySnapshot> users = userCollection.where('userName').
+        getDocuments();
 
     setState(() {
       userDocs = users;

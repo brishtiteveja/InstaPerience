@@ -152,6 +152,7 @@ class _Uploader extends State<Uploader> {
             SimpleDialogOption(
                 child: const Text('Choose from Gallery'),
                 onPressed: () async {
+
                   Navigator.of(context).pop();
                   File imageFile =
                       await ImagePicker.pickImage(source: ImageSource.gallery, maxWidth: 1920, maxHeight: 1200, imageQuality: 80);
@@ -190,6 +191,8 @@ class _Uploader extends State<Uploader> {
       setState(() {
         file = null;
         uploading = false;
+        pageController.jumpToPage(4);
+        // ipfs blockchain related
       });
     });
   }
