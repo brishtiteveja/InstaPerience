@@ -8,6 +8,9 @@ import 'main.dart';
 import 'dart:io';
 import 'location.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:path/path.dart';
+import 'package:photofilters/photofilters.dart';
+import 'package:image/image.dart' as imageLib;
 
 class Uploader extends StatefulWidget {
   _Uploader createState() => _Uploader();
@@ -15,6 +18,9 @@ class Uploader extends StatefulWidget {
 
 class _Uploader extends State<Uploader> {
   File file;
+
+  String fileName;
+  List<Filter> filters = presetFiltersList;
   //Strings required to save address
   Address address;
 
@@ -23,6 +29,7 @@ class _Uploader extends State<Uploader> {
   TextEditingController locationController = TextEditingController();
 
   bool uploading = false;
+  bool editing = false;
 
   @override
   initState() {
@@ -41,63 +48,137 @@ class _Uploader extends State<Uploader> {
     });
   }
 
+  Future getImage(context) async {
+    fileName = basename(file.path);
+    var image = imageLib.decodeImage(file.readAsBytesSync());
+    image = imageLib.copyResize(image, width: 600);
+    Map imagefile = await Navigator.push(
+      context,
+      new MaterialPageRoute(
+        builder: (context) => new PhotoFilterSelector(
+          title: Text("Edit"),
+          image: image,
+          filters: presetFiltersList,
+          filename: fileName,
+          loader: Center(child: CircularProgressIndicator()),
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+    if (imagefile != null && imagefile.containsKey('image_filtered')) {
+      setState(() {
+        file = imagefile['image_filtered'];
+      });
+      print(file.path);
+    }
+  }
+
   Widget build(BuildContext context) {
     return file == null
         ? IconButton(
             icon: Icon(Icons.file_upload),
             onPressed: () => {_selectImage(context)})
-        : Scaffold(
-            resizeToAvoidBottomPadding: false,
-            appBar: AppBar(
-              backgroundColor: Colors.white70,
-              leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: clearImage),
-              title: const Text(
-                'Post to',
-                style: const TextStyle(color: Colors.black),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                    onPressed: postImage,
-                    child: Text(
-                      "Post",
-                      style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0),
-                    ))
-              ],
+        : editing == false
+        ? Scaffold(
+          resizeToAvoidBottomPadding: false,
+          appBar: AppBar(
+            backgroundColor: Colors.white70,
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: clearImage),
+            title: const Text(
+              'Post to...',
+              style: const TextStyle(color: Colors.black),
             ),
-            body: ListView(
-              children: <Widget>[
-                PostForm(
-                  imageFile: file,
-                  descriptionController: descriptionController,
-                  locationController: locationController,
-                  loading: uploading,
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () => editImage(context),
+                  child: Text(
+                    "Edit",
+                    style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0),
+                  )),
+              FlatButton(
+                  onPressed: postImage,
+                  child: Text(
+                    "Post",
+                    style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0),
+                  ))
+            ],
+          ),
+          body: ListView(
+            children: <Widget>[
+              PostForm(
+                imageFile: file,
+                descriptionController: descriptionController,
+                locationController: locationController,
+                loading: uploading,
+              ),
+              Divider(), //scroll view where we will show location to users
+              (address == null)
+                  ? Container()
+                  : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(right: 5.0, left: 5.0),
+                child: Row(
+                  children: <Widget>[
+                    buildLocationButton(address.featureName),
+                    buildLocationButton(address.subLocality),
+                    buildLocationButton(address.locality),
+                    buildLocationButton(address.subAdminArea),
+                    buildLocationButton(address.adminArea),
+                    buildLocationButton(address.countryName),
+                  ],
                 ),
-                Divider(), //scroll view where we will show location to users
-                (address == null)
-                    ? Container()
-                    : SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.only(right: 5.0, left: 5.0),
-                        child: Row(
-                          children: <Widget>[
-                            buildLocationButton(address.featureName),
-                            buildLocationButton(address.subLocality),
-                            buildLocationButton(address.locality),
-                            buildLocationButton(address.subAdminArea),
-                            buildLocationButton(address.adminArea),
-                            buildLocationButton(address.countryName),
-                          ],
-                        ),
-                      ),
-                (address == null) ? Container() : Divider(),
-              ],
-            ));
-  }
+              ),
+              (address == null) ? Container() : Divider(),
+            ],
+          ))
+        : Scaffold(
+      // edit image scaffold
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          backgroundColor: Colors.white70,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: clearImage),
+          title: const Text(
+            'Edit',
+            style: const TextStyle(color: Colors.black),
+          ),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: finishEditImage,
+                child: Text(
+                  "Next",
+                  style: TextStyle(
+                      color: Colors.blueAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0),
+                )),
+          ],
+        ),
+        body: Center(
+          child: new Container(
+            child: file == null
+                ? Center(
+              child: new Text('No image selected.'),
+            )
+                : Image.file(file),
+          ),
+        ),
+        floatingActionButton: new FloatingActionButton(
+          onPressed: () => getImage(context),
+          tooltip: 'Pick Image',
+          child: new Icon(Icons.add_a_photo),
+        ),
+      );
+    }
 
   //method to build buttons with location.
   buildLocationButton(String locationName) {
@@ -176,6 +257,20 @@ class _Uploader extends State<Uploader> {
     setState(() {
       file = null;
     });
+  }
+
+  void editImage(context) {
+    setState(() {
+      editing = true;
+    });
+    getImage(context);
+  }
+
+  void finishEditImage() {
+    setState(() {
+      editing = false;
+    });
+
   }
 
   void postImage() {
