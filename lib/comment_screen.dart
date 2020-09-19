@@ -21,6 +21,9 @@ class _CommentScreenState extends State<CommentScreen> {
   final String postOwner;
   final String postMediaUrl;
 
+  bool didFetchComments = false;
+  List<Comment> fetchedComments = [];
+
   final TextEditingController _commentController = TextEditingController();
 
   _CommentScreenState({this.postId, this.postOwner, this.postMediaUrl});
@@ -55,26 +58,33 @@ class _CommentScreenState extends State<CommentScreen> {
           ),
           trailing: OutlineButton(onPressed: (){addComment(_commentController.text);}, borderSide: BorderSide.none, child: Text("Post"),),
         ),
-
       ],
     );
-
   }
 
 
   Widget buildComments() {
-    return FutureBuilder<List<Comment>>(
-        future: getComments(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Container(
-                alignment: FractionalOffset.center,
-                child: CircularProgressIndicator());
+    if (this.didFetchComments == false){
+      return FutureBuilder<List<Comment>>(
+          future: getComments(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return Container(
+                  alignment: FractionalOffset.center,
+                  child: CircularProgressIndicator());
 
-          return ListView(
-            children: snapshot.data,
-          );
-        });
+            this.didFetchComments = true;
+            this.fetchedComments = snapshot.data;
+            return ListView(
+              children: snapshot.data,
+            );
+          });
+    } else {
+      // for optimistic updating
+      return ListView(
+        children: this.fetchedComments
+      );
+    }
   }
 
   Future<List<Comment>> getComments() async {
@@ -88,7 +98,6 @@ class _CommentScreenState extends State<CommentScreen> {
     data.documents.forEach((DocumentSnapshot doc) {
       comments.add(Comment.fromDocument(doc));
     });
-
     return comments;
   }
 
@@ -101,7 +110,7 @@ class _CommentScreenState extends State<CommentScreen> {
         .add({
       "username": currentUserModel.username,
       "comment": comment,
-      "timestamp": DateTime.now(),
+      "timestamp": Timestamp.now(),
       "avatarUrl": currentUserModel.photoUrl,
       "userId": currentUserModel.id
     });
@@ -117,9 +126,20 @@ class _CommentScreenState extends State<CommentScreen> {
       "type": "comment",
       "userProfileImg": currentUserModel.photoUrl,
       "commentData": comment,
-      "timestamp": DateTime.now(),
+      "timestamp": Timestamp.now(),
       "postId": postId,
       "mediaUrl": postMediaUrl,
+    });
+
+    // add comment to the current listview for an optimistic update
+    setState(() {
+      fetchedComments = List.from(fetchedComments)..add(Comment(
+          username: currentUserModel.username,
+          comment: comment,
+          timestamp: Timestamp.now(),
+          avatarUrl: currentUserModel.photoUrl,
+          userId: currentUserModel.id
+      ));
     });
   }
 }
@@ -129,7 +149,7 @@ class Comment extends StatelessWidget {
   final String userId;
   final String avatarUrl;
   final String comment;
-  final String timestamp;
+  final Timestamp timestamp;
 
   Comment(
       {this.username,

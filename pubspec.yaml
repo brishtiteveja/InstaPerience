@@ -12,6 +12,7 @@ dependencies:
   google_sign_in: ^4.1.1
   uuid: ^2.0.4
   image: ^2.1.11
+  photofilters: ^2.0.1
   font_awesome_flutter: ^8.5.0
   async: ^2.4.0
   http: ^0.12.0+3
