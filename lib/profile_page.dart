@@ -264,32 +264,34 @@ class _ProfilePage extends State<ProfilePage>
 
       return Container(
           child: FutureBuilder<List<ImagePost>>(
-        future: getPosts(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Container(
-                alignment: FractionalOffset.center,
-                padding: const EdgeInsets.only(top: 10.0),
-                child: CircularProgressIndicator());
-          else if (view == "grid") {
-            // build the grid
-            return GridView.count(
-                crossAxisCount: 3,
-                childAspectRatio: 1.0,
+              future: getPosts(),
+              builder: (context, snapshot) {
+              if (!snapshot.hasData)
+                return Container(
+                  alignment: FractionalOffset.center,
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: CircularProgressIndicator());
+              else if (view == "grid") {
+                // build the grid
+                return GridView.count(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1.0,
 //                    padding: const EdgeInsets.all(0.5),
-                mainAxisSpacing: 1.5,
-                crossAxisSpacing: 1.5,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: snapshot.data.map((ImagePost imagePost) {
-                  return GridTile(child: ImageTile(imagePost));
-                }).toList());
-          } else if (view == "feed") {
-            return Column(
-                children: snapshot.data.map((ImagePost imagePost) {
-              return imagePost;
-            }).toList());
-          }
+                  mainAxisSpacing: 1.5,
+                  crossAxisSpacing: 1.5,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: snapshot.data.map((ImagePost imagePost) {
+                    return GridTile(child: ImageTile(imagePost));
+                  }).toList());
+              } else if (view == "feed") {
+                return Column(
+                  children: snapshot.data.map((ImagePost imagePost) {
+                    return imagePost;
+                  }).toList());
+              } else {
+                return null;
+              }
         },
       ));
     }
@@ -319,7 +321,7 @@ class _ProfilePage extends State<ProfilePage>
                   user.username,
                   style: const TextStyle(color: Colors.black),
                 ),
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.amberAccent,
               ),
               body: ListView(
                 children: <Widget>[

@@ -180,12 +180,13 @@ class _ImagePost extends State<ImagePost> {
               ),
               title: GestureDetector(
                 child: Text(snapshot.data.data['username'], style: boldStyle),
-                onTap: () {
-                  openProfile(context, ownerId);
-                },
+
               ),
               subtitle: Text(this.location),
               trailing: const Icon(Icons.more_vert),
+              onTap: () {
+                openProfile(context, ownerId);
+              },
             );
           }
 
@@ -206,51 +207,66 @@ class _ImagePost extends State<ImagePost> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        buildPostHeader(ownerId: ownerId),
-        buildLikeableImage(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(padding: const EdgeInsets.only(left: 20.0, top: 40.0)),
-            buildLikeIcon(),
-            Padding(padding: const EdgeInsets.only(right: 20.0)),
-            GestureDetector(
-                child: const Icon(
-                  FontAwesomeIcons.comment,
-                  size: 25.0,
-                ),
-                onTap: () {
-                  goToComments(
-                      context: context,
-                      postId: postId,
-                      ownerId: ownerId,
-                      mediaUrl: mediaUrl);
-                }),
-          ],
+        Ink (
+          color: Colors.amberAccent.withOpacity(0.65),
+          child: buildPostHeader(ownerId: ownerId)
         ),
-        Row(
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.only(left: 20.0),
-              child: Text(
-                "$likeCount likes",
-                style: boldStyle,
-              ),
-            )
-          ],
+        Ink(
+          color: Colors.amberAccent.withOpacity(0.5),
+          child: buildLikeableImage(),
         ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
+        Ink(
+          color: Colors.amberAccent.withOpacity(0.65),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(padding: const EdgeInsets.only(left: 20.0, top: 40.0)),
+              buildLikeIcon(),
+              Padding(padding: const EdgeInsets.only(right: 20.0)),
+              GestureDetector(
+                  child: const Icon(
+                    FontAwesomeIcons.comment,
+                    size: 25.0,
+                  ),
+                  onTap: () {
+                    goToComments(
+                        context: context,
+                        postId: postId,
+                        ownerId: ownerId,
+                        mediaUrl: mediaUrl);
+                  }),
+            ],
+          ),
+        ),
+        Ink(
+          color: Colors.amberAccent.withOpacity(0.5),
+          child: Row(
+            children: <Widget>[
+              Container(
                 margin: const EdgeInsets.only(left: 20.0),
                 child: Text(
-                  "$username ",
+                  "$likeCount likes",
                   style: boldStyle,
-                )),
-            Expanded(child: Text(description)),
-          ],
-        )
+                ),
+              )
+            ],
+          ),
+        ),
+        Ink(
+          color: Colors.amberAccent.withOpacity(0.5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  margin: const EdgeInsets.only(left: 20.0),
+                  child: Text(
+                    "$username ",
+                    style: boldStyle,
+                  )),
+              Expanded(child: Text(description)),
+            ],
+          )
+        ),
       ],
     );
   }

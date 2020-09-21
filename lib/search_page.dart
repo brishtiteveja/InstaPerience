@@ -14,7 +14,7 @@ class _SearchPage extends State<SearchPage> with AutomaticKeepAliveClientMixin<S
 
   buildSearchField() {
     return AppBar(
-      backgroundColor: Colors.lightBlueAccent,
+      backgroundColor: Colors.amberAccent,
       title: Form(
         child: TextFormField(
           decoration: InputDecoration(labelText: 'Search for a user...'),

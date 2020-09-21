@@ -76,7 +76,8 @@ class _Uploader extends State<Uploader> {
   Widget build(BuildContext context) {
     return file == null
         ? IconButton(
-            icon: Icon(Icons.file_upload),
+            icon: Icon(Icons.file_upload, size: 100),
+            focusColor: Colors.amberAccent,
             onPressed: () => {_selectImage(context)})
         : editing == false
         ? Scaffold(

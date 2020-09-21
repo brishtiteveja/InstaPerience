@@ -221,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                   "assets/images/google_signin_button.png",
                   width: 225.0,
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> {
             body: PageView(
               children: [
                 Container(
-                  color: Colors.white,
+                  color: Colors.lightBlue,
                   child: Feed(),
                 ),
                 Container(color: Colors.white, child: SearchPage()),
@@ -266,31 +266,31 @@ class _HomePageState extends State<HomePage> {
               onPageChanged: onPageChanged,
             ),
             bottomNavigationBar: CupertinoTabBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.amberAccent,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                     icon: Icon(Icons.home,
-                        color: (_page == 0) ? Colors.black : Colors.grey),
+                        color: (_page == 0) ? Colors.black : Colors.black),
                     title: Container(height: 0.0),
                     backgroundColor: Colors.white),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.search,
-                        color: (_page == 1) ? Colors.black : Colors.grey),
+                        color: (_page == 1) ? Colors.black : Colors.black),
                     title: Container(height: 0.0),
                     backgroundColor: Colors.white),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.add_circle,
-                        color: (_page == 2) ? Colors.black : Colors.grey),
+                        color: (_page == 2) ? Colors.black : Colors.black),
                     title: Container(height: 0.0),
                     backgroundColor: Colors.white),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.star,
-                        color: (_page == 3) ? Colors.black : Colors.grey),
+                        color: (_page == 3) ? Colors.black : Colors.black),
                     title: Container(height: 0.0),
                     backgroundColor: Colors.white),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.person,
-                        color: (_page == 4) ? Colors.black : Colors.grey),
+                        color: (_page == 4) ? Colors.black : Colors.black),
                     title: Container(height: 0.0),
                     backgroundColor: Colors.white),
               ],

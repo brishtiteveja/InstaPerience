@@ -20,7 +20,7 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> with AutomaticKeepA
           "Activity Feed",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.amberAccent,
       ),
       body: buildActivityFeed(),
     );
