@@ -7,6 +7,8 @@ import 'profile_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'comment_screen.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:secp256k1/secp256k1.dart';
+import 'package:pascaldart/pascaldart.dart';
 
 class ImagePost extends StatefulWidget {
   const ImagePost(
@@ -271,6 +273,30 @@ class _ImagePost extends State<ImagePost> {
     );
   }
 
+  /*
+  String sign2(String privKey, String sender, String tx) {
+    tx.sender = sender;
+    tx.ts = ;
+    tx.hash = ;
+    var msg = tx.hash;
+    var pk = hexToPrivateKey(privKey);
+    var signature = Base58.encode(pk);
+
+    var signature = sign(pk, msg);
+    tx.signature = ;
+
+
+
+    return tx;
+  }
+
+  void sendTransaction() {
+
+  }
+
+
+   */
+
   void _likePost(String postId2) {
     var userId = googleSignIn.currentUser.id;
     bool _liked = likes[userId] == true;
@@ -292,8 +318,25 @@ class _ImagePost extends State<ImagePost> {
     }
 
     if (!_liked) {
-      print('liking');
       reference.document(postId).updateData({'likes.$userId': true});
+
+      // send vote to instalon blockchain
+      var voter = "instacoin"; //username;
+      var wif = "21jo2MF2LfZPJGg2ahkLXYPiSfWeuqJPxiM2xzzvZAPU"; // private key
+      var weight = 1;
+      var tag = "entertainment";
+      var vt = 5;
+      var tx = {
+        "type" : 5,
+        "data" : {
+          "author" : ownerId,
+          "link" : mediaUrl,
+          "vt" : vt,
+          "tag" : tag,
+
+        }
+      };
+
 
       addActivityFeedItem();
 
@@ -318,14 +361,14 @@ class _ImagePost extends State<ImagePost> {
         .collection("items")
         .document(postId)
         .setData({
-      "username": currentUserModel.username,
-      "userId": currentUserModel.id,
-      "type": "like",
-      "userProfileImg": currentUserModel.photoUrl,
-      "mediaUrl": mediaUrl,
-      "timestamp": DateTime.now(),
-      "postId": postId,
-    });
+          "username": currentUserModel.username,
+          "userId": currentUserModel.id,
+          "type": "like",
+          "userProfileImg": currentUserModel.photoUrl,
+          "mediaUrl": mediaUrl,
+          "timestamp": DateTime.now(),
+          "postId": postId,
+        });
   }
 
   void removeActivityFeedItem() {

@@ -141,9 +141,14 @@ class ActivityFeedItem extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 15.0),
-          child: CircleAvatar(
-            radius: 23.0,
-            backgroundImage: NetworkImage(userProfileImg),
+          child: GestureDetector(
+            onTap: () {
+              openProfile(context, userId);
+            },
+            child: CircleAvatar(
+              radius: 23.0,
+              backgroundImage: NetworkImage(userProfileImg),
+            ),
           ),
         ),
         Expanded(

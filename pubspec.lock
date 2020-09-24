@@ -29,6 +29,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0+1"
+  characters:
+    dependency: transitive
+    description:
+      name: characters
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   charcode:
     dependency: transitive
     description:
@@ -70,7 +77,7 @@ packages:
       name: collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.14.12"
+    version: "1.14.13"
   convert:
     dependency: transitive
     description:
@@ -235,6 +242,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.1+1"
+  hex:
+    dependency: transitive
+    description:
+      name: hex
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.2"
   http:
     dependency: "direct main"
     description:
@@ -284,6 +298,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.2"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   location:
     dependency: "direct main"
     description:
@@ -305,6 +326,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
+  pascaldart:
+    dependency: "direct main"
+    description:
+      name: pascaldart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -354,6 +382,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.4"
+  photofilters:
+    dependency: "direct main"
+    description:
+      name: photofilters
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   platform:
     dependency: transitive
     description:
@@ -365,6 +400,13 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
@@ -389,6 +431,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.24.1"
+  secp256k1:
+    dependency: "direct main"
+    description:
+      name: secp256k1
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -484,7 +533,7 @@ packages:
       name: typed_data
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.6"
+    version: "1.2.0"
   uuid:
     dependency: "direct main"
     description:
@@ -514,5 +563,5 @@ packages:
     source: hosted
     version: "4.2.0"
 sdks:
-  dart: ">=2.8.0 <3.0.0"
+  dart: ">=2.9.0-14.0.dev <3.0.0"
   flutter: ">=1.12.13+hotfix.5 <2.0.0"

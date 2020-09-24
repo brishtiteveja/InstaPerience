@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'feed.dart';
+import 'feed_v2.dart';
 import 'upload_page.dart';
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -168,17 +168,14 @@ class InstaPerience extends StatelessWidget {
     return MaterialApp(
       title: 'InstaPerience',
       theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-          // counter didn't reset back to zero; the application is not restarted.
           primarySwatch: Colors.blue,
           buttonColor: Colors.pink,
-          primaryIconTheme: IconThemeData(color: Colors.black)),
+          primaryIconTheme: IconThemeData(color: Colors.black),
+          textTheme: Theme.of(context).textTheme.apply(
+            bodyColor: Colors.white,
+            displayColor: Colors.black
+          )
+      ),
       home: HomePage(title: 'InstaPerience'),
       debugShowCheckedModeBanner: false,
     );
@@ -229,6 +226,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget get bottomNavigationbar => CupertinoTabBar(
+      backgroundColor: Colors.amberAccent,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home,
+          color: (_page == 0) ? Colors.black : Colors.black),
+            title: Container(height: 0.0),
+            backgroundColor: Colors.white
+        ),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.search,
+                color: (_page == 1) ? Colors.black : Colors.black),
+            title: Container(height: 0.0),
+            backgroundColor: Colors.white),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle,
+                color: (_page == 2) ? Colors.black : Colors.black),
+            title: Container(height: 0.0),
+            backgroundColor: Colors.white),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.star,
+                color: (_page == 3) ? Colors.black : Colors.black),
+            title: Container(height: 0.0),
+            backgroundColor: Colors.white),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person,
+                color: (_page == 4) ? Colors.black : Colors.black),
+            title: Container(height: 0.0),
+            backgroundColor: Colors.white),
+      ],
+      onTap: navigationTapped,
+      currentIndex: _page,
+  );
+
+
   @override
   Widget build(BuildContext context) {
     if (triedSilentLogin == false) {
@@ -242,6 +274,7 @@ class _HomePageState extends State<HomePage> {
     return (googleSignIn.currentUser == null || currentUserModel == null)
         ? buildLoginPage()
         : Scaffold(
+            backgroundColor: Colors.black,
             body: PageView(
               children: [
                 Container(
@@ -265,38 +298,7 @@ class _HomePageState extends State<HomePage> {
               physics: NeverScrollableScrollPhysics(),
               onPageChanged: onPageChanged,
             ),
-            bottomNavigationBar: CupertinoTabBar(
-              backgroundColor: Colors.amberAccent,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home,
-                        color: (_page == 0) ? Colors.black : Colors.black),
-                    title: Container(height: 0.0),
-                    backgroundColor: Colors.white),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.search,
-                        color: (_page == 1) ? Colors.black : Colors.black),
-                    title: Container(height: 0.0),
-                    backgroundColor: Colors.white),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.add_circle,
-                        color: (_page == 2) ? Colors.black : Colors.black),
-                    title: Container(height: 0.0),
-                    backgroundColor: Colors.white),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.star,
-                        color: (_page == 3) ? Colors.black : Colors.black),
-                    title: Container(height: 0.0),
-                    backgroundColor: Colors.white),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person,
-                        color: (_page == 4) ? Colors.black : Colors.black),
-                    title: Container(height: 0.0),
-                    backgroundColor: Colors.white),
-              ],
-              onTap: navigationTapped,
-              currentIndex: _page,
-            ),
+            bottomNavigationBar: bottomNavigationbar,
           );
   }
 
