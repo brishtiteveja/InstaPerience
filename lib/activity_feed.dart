@@ -15,6 +15,7 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> with AutomaticKeepA
     super.build(context); // reloads state when opened again
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(255, 5, 255, 0.5),
       appBar: AppBar(
         title: Text(
           "Activity Feed",
@@ -37,7 +38,10 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> with AutomaticKeepA
                   padding: const EdgeInsets.only(top: 10.0),
                   child: CircularProgressIndicator());
             else {
-              return ListView(children: snapshot.data);
+              return Container(
+                color: Color.fromRGBO (255, 191, 0, 0.5),
+                child: ListView(children: snapshot.data),
+              );
             }
           }),
     );
@@ -193,6 +197,7 @@ openImage(BuildContext context, String imageId) {
       .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
     return Center(
       child: Scaffold(
+          backgroundColor: Color.fromRGBO(255, 255, 255, 0.5),
           appBar: AppBar(
             title: Text('Photo',
                 style: TextStyle(

@@ -24,18 +24,20 @@ class _ContentDescription extends State<ContentDescription> with AutomaticKeepAl
 
     return Container(
       height: 70.0,
-      padding: EdgeInsets.only(left: 10, top:15),
+      padding: EdgeInsets.only(left: 20.0, top: 5.0),
       child:
         Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(content.username, style: TextStyle(fontWeight: FontWeight.bold),),
-            Text('Video title and some other stuff'),
-            Row(children: [
-              Icon(Icons.music_note,  size: 15.0),
-              Text('Artist name - Album name - song', style: TextStyle(fontSize: 12.0))]),
+            Text("@" + content.username, style: TextStyle(fontWeight: FontWeight.bold),),
+            Text(" " + content.location),
+            Text(" -- " + content.description),
+//            Row(children: [
+//              Icon(Icons.music_note,  size: 15.0),
+//              Text('Artist name - Album name - song', style: TextStyle(fontSize: 12.0))]
+//            ),
           ]),
       );
   }

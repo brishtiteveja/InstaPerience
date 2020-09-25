@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'models/user.dart';
 import 'widgets/content_description.dart';
 import 'widgets/actions_toolbar.dart';
 import 'widgets/bottom_toolbar.dart';
@@ -18,7 +20,13 @@ class Feed extends StatefulWidget {
 
 class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   List<ImagePost> feedData;
+  Map<String, User> users;
+  Map<String, String> displayNameToUserName;
+  Map<String, String> userNameToDisplayName;
+
+  static int prevContentId = 0;
   static int curContentId = 0;
+  static bool contentUpdated = false;
   static ImagePost content;
   ContentDescription contentDescription;
 
@@ -33,6 +41,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
 
   @override
   void initState() {
+    this._getUser();
     this._loadFeed();
     super.initState();
   }
@@ -56,53 +65,87 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
 
     return res;
   }
-  int getPreviousContent() {
-//    curContentId = getRandomInt(0, feedData.length);
-    curContentId = curContentId <= 0 ? feedData.length - 1 : curContentId - 1;
-    content = feedData.getRange(curContentId, feedData.length-1).first;
+  void getPreviousContentBySwipe() {
+    if (prevContentId == curContentId) {
+      curContentId = curContentId - 1;
+    }
 
-    setState(() {
-    });
+    if (curContentId == feedData.length) {
+      curContentId = 0;
+    }else if (curContentId == -1) {
+      curContentId = feedData.length - 1;
+    } else {}
 
-    return curContentId;
+    if (contentUpdated == false && (curContentId == prevContentId - 1 || prevContentId == 0)) {
+      content = feedData[curContentId];
+      contentUpdated = true;
+      setState(() {
+      });
+    }
   }
 
-  int getNextContent() {
+  void getNextContentBySwipe() {
+    if (prevContentId == curContentId) {
+      curContentId = curContentId + 1;
+    }
+
+    if (curContentId == feedData.length) {
+      curContentId = 0;
+    }else if (curContentId == -1) {
+      curContentId = feedData.length - 1;
+    } else {}
+
+    if (contentUpdated == false && (curContentId == prevContentId + 1 || curContentId == 0)) {
+      content = feedData[curContentId];
+      contentUpdated = true;
+      setState(() {
+      });
+    }
+  }
+
+  void getNextContentByTap() {
 //    curContentId = getRandomInt(0, feedData.length);
-    curContentId = curContentId >= feedData.length ? 0 : curContentId + 1;
-    content = feedData.getRange(curContentId, feedData.length-1).first;
+    if (prevContentId == curContentId)
+      curContentId = curContentId + 1;
 
-    setState(() {
-    });
+    if (curContentId == feedData.length) {
+      curContentId = 0;
+    }else if (curContentId == -1) {
+      curContentId = feedData.length - 1;
+    } else {}
 
-    return curContentId;
+    if (contentUpdated == false && (curContentId == prevContentId + 1 || curContentId == 0)) {
+      content = feedData[curContentId];
+      setState(() {
+      });
+    }
   }
 
   Widget _mainContent() {
-    content = feedData.getRange(curContentId, feedData.length-1).first;
+    content = feedData[curContentId];
 
     mainContentWidth = screenWidth * 0.8;
     mainContentHeight = screenHeight * 0.7;
 
-    return Container(
-         padding: EdgeInsets.only(left:10.0, bottom: 30.0, right: 10.0, top:0.0),
+    Container mainContainer = Container(
+         padding: EdgeInsets.only(left:10.0, bottom: 10.0, right: 10.0, top:0.0),
 //         decoration: BoxDecoration(
 //           color: Color.alphaBlend(Colors.black26, Colors.blueGrey),
 //           borderRadius: BorderRadius.circular(mainContentWidth * 0.05),
 //        ),
         child: GestureDetector(
-          onTap: getNextContent,
+          onTap: getNextContentByTap,
           onPanUpdate: (details) {
             if (details.delta.dx > 0) {
               // swiping in right direction
-              getNextContent();
+              getPreviousContentBySwipe();
             } else {
-              getPreviousContent();
+              getNextContentBySwipe();
             }
           },
           child: CachedNetworkImage(
             width: mainContentWidth,
-            height: mainContentHeight,
+            height: mainContentHeight * 0.9,
             imageUrl: content.mediaUrl, //"https://scontent-ort2-2.cdninstagram.com/v/t51.2885-15/e35/119069697_185870479586445_7414306451367379982_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com&_nc_cat=109&_nc_ohc=e5KswmGyJ4IAX-lImQ4&_nc_tp=18&oh=9e3352926043d756465f5c3bb87461c5&oe=5F968134",
             placeholder: (context, url) => new CircularProgressIndicator(),
             errorWidget: (context, url, error) => new Icon(Icons.error),
@@ -110,26 +153,31 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
         ),
 
      );
+
+    contentUpdated = false;
+    prevContentId = curContentId;
+
+    return mainContainer;
   }
 
   List<Widget> _getContent() {
     List<Widget> stackLayers = new List<Widget>();
 
     if (feedData != null && feedData.length != 0) {
-      content = feedData.getRange(curContentId, curContentId+1).first;
+      content = feedData[curContentId];
 
       stackLayers.add(_mainContent());
 
       stackLayers.add(
           Padding(
-            padding: EdgeInsets.fromLTRB(0, mainContentHeight * 0.98, 0.0, 0.0),
+            padding: EdgeInsets.fromLTRB(0, mainContentHeight * 0.90, 0.0, 0.0),
             child: ContentDescription(content: content),
           )
       );
       stackLayers.add(
           Padding(
             padding: EdgeInsets.fromLTRB(mainContentWidth, mainContentHeight * 0.5, 0.0, 0.0),
-            child: ActionsToolbar(content: content),
+            child: ActionsToolbar(content: content, user: users[userNameToDisplayName[content.username]]),
           )
       );
     }
@@ -168,16 +216,19 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
 //    screenHeight2 = screenHeight2 - padding.top - padding.bottom;
 
     super.build(context); // reloads state when opened again
-
     // source code from https://medium.com/filledstacks/breaking-down-tiktoks-ui-using-flutter-8489fe4ad944
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
         children: <Widget> [
-          topSection,
+          Container(
+            child: topSection,
+            padding: EdgeInsets.all(10),
+          ),
           // Middle expanded
-          middleSection,
-
+          Container(
+            child: middleSection,
+          ),
           //BottomToolbar(),
         ]
       )
@@ -185,6 +236,7 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   }
 
   Future<Null> _refresh() async {
+    await _getUser();
     await _getFeed();
 
     setState(() {});
@@ -208,8 +260,23 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     }
   }
 
+  _getUser() async {
+    var snap = await Firestore.instance.collection("insta_users").getDocuments();
+
+    users = new Map<String, User>();
+    displayNameToUserName = new Map<String, String>();
+    userNameToDisplayName = new Map<String, String>();
+    for (var doc in snap.documents) {
+      User user = User.fromDocument(doc);
+      users[user.displayName] = user;
+      displayNameToUserName[user.displayName] = user.username;
+      userNameToDisplayName[user.username] = user.displayName;
+    }
+    return null;
+  }
+
   _getFeed() async {
-    print("Staring getFeed");
+    print("Starting getFeed");
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 

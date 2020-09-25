@@ -1,22 +1,30 @@
+import 'package:InstaPerience/main.dart';
+import 'package:InstaPerience/models/user.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../image_post.dart';
+import '../profile_page.dart';
 
 
 class ActionsToolbar extends StatefulWidget {
   final ImagePost content;
-  ActionsToolbar({this.content});
+  final User user;
+  ActionsToolbar({this.content, this.user});
 
   @override
   State<StatefulWidget> createState() => _ActionsToolbar(
     content: this.content,
+    user: this.user,
   );
 }
 
 class _ActionsToolbar extends State<ActionsToolbar> with AutomaticKeepAliveClientMixin<ActionsToolbar> {
   ImagePost content;
-  _ActionsToolbar({this.content});
+  User user;
+
+  _ActionsToolbar({this.content, this.user});
 
 // Full dimensions of an action
   static const double ActionWidgetSize = 60.0;
@@ -68,23 +76,25 @@ class _ActionsToolbar extends State<ActionsToolbar> with AutomaticKeepAliveClien
   }
 
   Widget _getProfilePicture() {
-    return Positioned(
-      left: (ActionWidgetSize / 2) - (ProfileImageSize / 2),
-      child: Container(
-        padding: EdgeInsets.all(1.0),
-        height: ProfileImageSize,
-        width: ProfileImageSize,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(ProfileImageSize * 0.05),
-        ),
-        child: CachedNetworkImage(
-          imageUrl: content.mediaUrl,//"https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-19/s320x320/40226446_316182435628302_1679274917872271360_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_ohc=p9bNylfbuSoAX9FJ4Fa&oh=cd48a85fde4d5affeadc697f49337761&oe=5F944DD4",
-          placeholder: (context, url) => new CircularProgressIndicator(),
-          errorWidget: (context, url, error) => new Icon(Icons.error),
-        )
-      )
+    Positioned profileImgContainer = Positioned(
+            left: (ActionWidgetSize / 2) - (ProfileImageSize / 2),
+            child: Container(
+                padding: EdgeInsets.all(1.0),
+                height: ProfileImageSize,
+                width: ProfileImageSize,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(ProfileImageSize * 0.05),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: user.photoUrl,
+                  placeholder: (context, url) => new CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => new Icon(Icons.error),
+                )
+            )
     );
+
+    return profileImgContainer;
   }
 
   Widget _getFollowAction({
@@ -141,6 +151,7 @@ class _ActionsToolbar extends State<ActionsToolbar> with AutomaticKeepAliveClien
     super.build(context); // reloads state when opened again
 
     this.content = super.widget.content;
+    this.user = super.widget.user;
 
     return Container(
       width: 100.0,

@@ -316,6 +316,7 @@ class _ProfilePage extends State<ProfilePage>
           }
 
           return Scaffold(
+              backgroundColor: Color.fromRGBO(255, 191, 0, 0.5),
               appBar: AppBar(
                 title: Text(
                   user.username,
