@@ -11,3 +11,6 @@ packages
 .flutter-plugins-dependencies
 .dart_tool/
 functions/node_modules/
+
+GoogleService-Info.plist
+.*.

@@ -278,6 +278,9 @@ class _Uploader extends State<Uploader> {
     setState(() {
       uploading = true;
     });
+
+    //abstractModel.post()
+
     uploadImage(file).then((String data) {
       postToFireStore(
           mediaUrl: data,

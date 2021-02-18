@@ -36,7 +36,7 @@ class _CommentScreenState extends State<CommentScreen> {
           "Comments",
           style: TextStyle(color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.yellowAccent,
       ),
       body: buildPage(),
     );
@@ -49,14 +49,26 @@ class _CommentScreenState extends State<CommentScreen> {
           child:
             buildComments(),
         ),
-        Divider(),
-        ListTile(
-          title: TextFormField(
-            controller: _commentController,
-            decoration: InputDecoration(labelText: 'Write a comment...'),
-            onFieldSubmitted: addComment,
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.yellowAccent,
           ),
-          trailing: OutlineButton(onPressed: (){addComment(_commentController.text);}, borderSide: BorderSide.none, child: Text("Post"),),
+          child: Divider(),
+        ),
+        new Container(
+          decoration: new BoxDecoration(
+            color: Colors.yellow,
+          ),
+          child: new ListTile(
+            title: TextFormField(
+              controller: _commentController,
+              decoration: InputDecoration(
+                labelText: 'Write a comment...',
+              ),
+              onFieldSubmitted: addComment,
+            ),
+            trailing: OutlineButton(onPressed: (){addComment(_commentController.text);}, borderSide: BorderSide.none, child: Text("Post"),),
+          )
         ),
       ],
     );
@@ -75,8 +87,13 @@ class _CommentScreenState extends State<CommentScreen> {
 
             this.didFetchComments = true;
             this.fetchedComments = snapshot.data;
-            return ListView(
-              children: snapshot.data,
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.yellow
+              ),
+              child: ListView(
+                children: snapshot.data,
+              ),
             );
           });
     } else {

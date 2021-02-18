@@ -38,15 +38,59 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
   static double mainContentHeight = 500.0;
 
   BuildContext context;
+  Timer _timer;
+  int mSec = 1000;
+  int mSecPerLeftSwipe = 150;
+  int mSecPerRightSwipe = 150;
+  int _start = 150;
+  int autoSwipeDuration = 1000;
+  bool autoFeedSwipe = false;
+
+  callback(bool switchAutoFeedSwipe, String from) {
+    setState(() {
+      autoFeedSwipe = switchAutoFeedSwipe;
+      startTimer(true);
+    });
+  }
+
+  void startTimer(bool left) {
+    _start = left? mSecPerLeftSwipe : mSecPerRightSwipe;
+    const oneMilliSec = const Duration(milliseconds: 1);
+    _timer = new Timer.periodic(oneMilliSec, (Timer timer) {
+      if(_start == 0) {
+        setState(() {
+          if (autoFeedSwipe == false)
+            timer.cancel();
+          else {
+            contentUpdated = false;
+            _start = mSecPerLeftSwipe = autoSwipeDuration;
+            getNextContentBySwipe();
+          }
+//          autoFeedSwipe = false;
+        });
+      } else {
+        setState(() {
+          _start--;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
+    super.initState();
     this._getUser();
     this._loadFeed();
-    super.initState();
   }
 
   buildFeed() {
+
     if (feedData != null) {
       return ListView(
         children: feedData,
@@ -66,41 +110,81 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     return res;
   }
   void getPreviousContentBySwipe() {
-    if (prevContentId == curContentId) {
+    print("Time = $_start");
+
+    if (_start == mSecPerRightSwipe && contentUpdated == false) {
+      startTimer(false);
+
       curContentId = curContentId - 1;
+
+      if (curContentId == feedData.length) {
+        curContentId = 0;
+      }else if (curContentId < 0) {
+        curContentId = feedData.length - 1;
+      } else {}
+
+      print("Content id = $curContentId");
+      if (contentUpdated == false) {
+        content = feedData[curContentId];
+        contentUpdated = true;
+        prevContentId = curContentId;
+        setState(() {
+        });
+      }
     }
 
-    if (curContentId == feedData.length) {
-      curContentId = 0;
-    }else if (curContentId == -1) {
-      curContentId = feedData.length - 1;
-    } else {}
-
-    if (contentUpdated == false && (curContentId == prevContentId - 1 || prevContentId == 0)) {
-      content = feedData[curContentId];
-      contentUpdated = true;
-      setState(() {
-      });
+    if (_start == 0) {
+      _start = mSecPerRightSwipe;
+      contentUpdated = false;
+//      return;
     }
+
+//    if (contentUpdated == true && _start > 0 && _start < mSecPerSwipe) {
+//      return;
+//    }
+
+
   }
 
   void getNextContentBySwipe() {
-    if (prevContentId == curContentId) {
+    print("Time = $_start");
+
+    if (_start == mSecPerLeftSwipe && contentUpdated == false) {
+      if (autoFeedSwipe == false) {
+        //autoFeedSwipe = true;
+        startTimer(true);
+      }
+
       curContentId = curContentId + 1;
+
+      if (curContentId == feedData.length) {
+        curContentId = 0;
+      }else if (curContentId < 0) {
+        curContentId = feedData.length - 1;
+      } else {}
+
+      print("Content id = $curContentId");
+      if (contentUpdated == false) {
+        content = feedData[curContentId];
+        contentUpdated = true;
+        prevContentId = curContentId;
+        setState(() {
+        });
+      }
     }
 
-    if (curContentId == feedData.length) {
-      curContentId = 0;
-    }else if (curContentId == -1) {
-      curContentId = feedData.length - 1;
-    } else {}
-
-    if (contentUpdated == false && (curContentId == prevContentId + 1 || curContentId == 0)) {
-      content = feedData[curContentId];
-      contentUpdated = true;
-      setState(() {
-      });
+    if (_start == 0) {
+      _start = mSecPerLeftSwipe;
+      contentUpdated = false;
+//      return;
     }
+//
+//    if (contentUpdated == true && _start > 0 && _start < mSecPerSwipe) {
+//      return;
+//    }
+
+    return;
+
   }
 
   void getNextContentByTap() {
@@ -121,11 +205,28 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
     }
   }
 
+  Text getTimerText() {
+    int t = (_start ~/ 1000).toInt() + 1;
+    String ts = (t < 0) ? "" : t.toString();
+    return Text(ts, style: TextStyle(fontWeight: FontWeight.bold),);
+  }
+
+  Widget _timerPanelContent() {
+    Container timerPanelContainer = Container(
+        padding: EdgeInsets.only(left:10.0, bottom:10.0, right:10.0, top:0.0),
+        child: GestureDetector(
+          child: getTimerText(),
+        )
+    );
+
+    return timerPanelContainer;
+  }
+
   Widget _mainContent() {
     content = feedData[curContentId];
 
     mainContentWidth = screenWidth * 0.8;
-    mainContentHeight = screenHeight * 0.7;
+    mainContentHeight = screenHeight * 0.6;
 
     Container mainContainer = Container(
          padding: EdgeInsets.only(left:10.0, bottom: 10.0, right: 10.0, top:0.0),
@@ -143,19 +244,18 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
               getNextContentBySwipe();
             }
           },
+          onPanEnd: (x) {
+          },
           child: CachedNetworkImage(
             width: mainContentWidth,
-            height: mainContentHeight * 0.9,
+            height: mainContentHeight * 0.8,
             imageUrl: content.mediaUrl, //"https://scontent-ort2-2.cdninstagram.com/v/t51.2885-15/e35/119069697_185870479586445_7414306451367379982_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com&_nc_cat=109&_nc_ohc=e5KswmGyJ4IAX-lImQ4&_nc_tp=18&oh=9e3352926043d756465f5c3bb87461c5&oe=5F968134",
-            placeholder: (context, url) => new CircularProgressIndicator(),
+            //placeholder: (context, url) => new CircularProgressIndicator(),
             errorWidget: (context, url, error) => new Icon(Icons.error),
           ),
         ),
 
      );
-
-    contentUpdated = false;
-    prevContentId = curContentId;
 
     return mainContainer;
   }
@@ -167,17 +267,18 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
       content = feedData[curContentId];
 
       stackLayers.add(_mainContent());
+      stackLayers.add(_timerPanelContent());
 
       stackLayers.add(
           Padding(
-            padding: EdgeInsets.fromLTRB(0, mainContentHeight * 0.90, 0.0, 0.0),
+            padding: EdgeInsets.fromLTRB(0, mainContentHeight * 0.95, 0.0, 0.0),
             child: ContentDescription(content: content),
           )
       );
       stackLayers.add(
           Padding(
-            padding: EdgeInsets.fromLTRB(mainContentWidth, mainContentHeight * 0.5, 0.0, 0.0),
-            child: ActionsToolbar(content: content, user: users[userNameToDisplayName[content.username]]),
+            padding: EdgeInsets.fromLTRB(mainContentWidth * 0.75, mainContentHeight * 0.75, 0.0, 0.0),
+            child: ActionsToolbar(content: content, user: users[userNameToDisplayName[content.username]], callback: callback),
           )
       );
     }
@@ -192,13 +293,17 @@ class _Feed extends State<Feed> with AutomaticKeepAliveClientMixin<Feed> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Following'),
+          GestureDetector(
+            child:Text('Following'),
+          ),
           Container(
             width: 15.0,
           ),
-          Text('For you',
-              style: TextStyle(
-                  fontSize: 17.0, fontWeight: FontWeight.bold))
+          GestureDetector(
+            child: Text('For you',
+                style: TextStyle(
+                    fontSize: 17.0, fontWeight: FontWeight.bold))
+          )
         ]),
   );
 

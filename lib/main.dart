@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'feed_v2.dart';
@@ -25,6 +26,10 @@ User currentUserModel;
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized(); // after upgrading flutter this is now necessary
+  // Disabling landscape orietnation by only allowing portrait up and down
+  SystemChrome.setPreferredOrientations(
+     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]
+  );
 
   // enable timestamps in firebase
   Firestore.instance.settings().then((_) {
@@ -172,7 +177,7 @@ class InstaPerience extends StatelessWidget {
           buttonColor: Colors.pink,
           primaryIconTheme: IconThemeData(color: Colors.black),
           textTheme: Theme.of(context).textTheme.apply(
-            bodyColor: Colors.white,
+            bodyColor: Colors.black,
             displayColor: Colors.black
           )
       ),

@@ -7,8 +7,6 @@ import 'profile_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'comment_screen.dart';
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:secp256k1/secp256k1.dart';
-import 'package:pascaldart/pascaldart.dart';
 
 class ImagePost extends StatefulWidget {
   const ImagePost(
@@ -320,22 +318,7 @@ class _ImagePost extends State<ImagePost> {
     if (!_liked) {
       reference.document(postId).updateData({'likes.$userId': true});
 
-      // send vote to instalon blockchain
-      var voter = "instacoin"; //username;
-      var wif = "21jo2MF2LfZPJGg2ahkLXYPiSfWeuqJPxiM2xzzvZAPU"; // private key
-      var weight = 1;
-      var tag = "entertainment";
-      var vt = 5;
-      var tx = {
-        "type" : 5,
-        "data" : {
-          "author" : ownerId,
-          "link" : mediaUrl,
-          "vt" : vt,
-          "tag" : tag,
 
-        }
-      };
 
 
       addActivityFeedItem();
