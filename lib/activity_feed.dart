@@ -15,7 +15,7 @@ class _ActivityFeedPageState extends State<ActivityFeedPage> with AutomaticKeepA
     super.build(context); // reloads state when opened again
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(255, 5, 255, 0.5),
+      backgroundColor: Colors.yellowAccent, //Color.fromRGBO(255, 5, 255, 0.5),
       appBar: AppBar(
         title: Text(
           "Activity Feed",
@@ -111,15 +111,18 @@ class ActivityFeedItem extends StatelessWidget {
         child: Container(
           height: 45.0,
           width: 45.0,
+          color: Colors.yellowAccent,
           child: AspectRatio(
             aspectRatio: 487 / 451,
             child: Container(
               decoration: BoxDecoration(
+                  color: Colors.yellowAccent,
                   image: DecorationImage(
-                fit: BoxFit.fill,
-                alignment: FractionalOffset.topCenter,
-                image: NetworkImage(mediaUrl),
-              )),
+                    fit: BoxFit.fill,
+                    alignment: FractionalOffset.topCenter,
+                    image: NetworkImage(mediaUrl),
+                  )
+              ),
             ),
           ),
         ),
@@ -195,22 +198,31 @@ openImage(BuildContext context, String imageId) {
   print("the image id is $imageId");
   Navigator.of(context)
       .push(MaterialPageRoute<bool>(builder: (BuildContext context) {
-    return Center(
-      child: Scaffold(
-          backgroundColor: Color.fromRGBO(255, 255, 255, 0.5),
-          appBar: AppBar(
-            title: Text('Photo',
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold)),
-            backgroundColor: Colors.white,
+    return Container(
+        color: Colors.yellowAccent,
+        child: Center(
+          child: Scaffold(
+            backgroundColor: Colors.yellowAccent,//Color.fromRGBO(255, 255, 255, 0.5),
+            appBar: AppBar(
+              title:
+                Container(
+                  color: Colors.yellowAccent,
+                  child: Text('Photo',
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold)),
+                ),
+              backgroundColor: Colors.yellowAccent,
+            ),
+            body: ListView(
+              children: <Widget>[
+                Container(
+                  color: Colors.yellowAccent,
+                  child: ImagePostFromId(id: imageId),
+                ),
+              ],
+            ),
           ),
-          body: ListView(
-            children: <Widget>[
-              Container(
-                child: ImagePostFromId(id: imageId),
-              ),
-            ],
-          )),
+        ),
     );
   }));
 }

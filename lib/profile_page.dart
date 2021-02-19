@@ -43,7 +43,7 @@ class _ProfilePage extends State<ProfilePage>
               title: Text('Edit Profile',
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.yellowAccent,
               actions: <Widget>[
                 IconButton(
                     icon: Icon(
@@ -268,6 +268,7 @@ class _ProfilePage extends State<ProfilePage>
               builder: (context, snapshot) {
               if (!snapshot.hasData)
                 return Container(
+                  color: Colors.yellowAccent,
                   alignment: FractionalOffset.center,
                   padding: const EdgeInsets.only(top: 10.0),
                   child: CircularProgressIndicator());
@@ -427,23 +428,31 @@ class ImageTile extends StatelessWidget {
               title: Text('Photo',
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.yellowAccent,
             ),
-            body: ListView(
-              children: <Widget>[
-                Container(
-                  child: imagePost,
-                ),
-              ],
-            )),
+            body: Container(
+                child: ListView(
+                  children: <Widget>[
+                    Container(
+                      color: Colors.yellowAccent,
+                      child: imagePost,
+                    ),
+                  ],
+                )
+            )
+        ),
       );
     }));
   }
 
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => clickedImage(context),
-        child: Image.network(imagePost.mediaUrl, fit: BoxFit.cover));
+    return Container(
+        color: Colors.yellowAccent,
+        child: GestureDetector(
+            onTap: () => clickedImage(context),
+            child: Image.network(imagePost.mediaUrl, fit: BoxFit.cover),
+        )
+    );
   }
 }
 

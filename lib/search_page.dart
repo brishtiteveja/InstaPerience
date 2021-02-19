@@ -60,18 +60,25 @@ class _SearchPage extends State<SearchPage> with AutomaticKeepAliveClientMixin<S
     return Scaffold(
       appBar: buildSearchField(),
       body: userDocs == null
-          ? Text("")
-          : FutureBuilder<QuerySnapshot>(
-              future: userDocs,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return buildSearchResults(snapshot.data.documents);
-                } else {
-                  return Container(
-                      alignment: FractionalOffset.center,
-                      child: CircularProgressIndicator());
-                }
-              }),
+          ? Container(
+              color: Colors.yellowAccent,
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: Colors.yellowAccent,
+              ),
+              child: FutureBuilder<QuerySnapshot>(
+                future: userDocs,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return buildSearchResults(snapshot.data.documents);
+                  } else {
+                    return Container(
+                        alignment: FractionalOffset.center,
+                        child: CircularProgressIndicator());
+                  }
+                }),
+          )
     );
   }
 

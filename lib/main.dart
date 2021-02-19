@@ -235,11 +235,10 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.amberAccent,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home,
-          color: (_page == 0) ? Colors.black : Colors.black),
+            icon: Icon(Icons.person,
+                color: (_page == 4) ? Colors.black : Colors.black),
             title: Container(height: 0.0),
-            backgroundColor: Colors.white
-        ),
+            backgroundColor: Colors.white),
         BottomNavigationBarItem(
             icon: Icon(Icons.search,
                 color: (_page == 1) ? Colors.black : Colors.black),
@@ -255,11 +254,13 @@ class _HomePageState extends State<HomePage> {
                 color: (_page == 3) ? Colors.black : Colors.black),
             title: Container(height: 0.0),
             backgroundColor: Colors.white),
+
         BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: (_page == 4) ? Colors.black : Colors.black),
+            icon: Icon(Icons.home,
+                color: (_page == 0) ? Colors.black : Colors.black),
             title: Container(height: 0.0),
-            backgroundColor: Colors.white),
+            backgroundColor: Colors.white
+        ),
       ],
       onTap: navigationTapped,
       currentIndex: _page,
@@ -283,21 +284,25 @@ class _HomePageState extends State<HomePage> {
             body: PageView(
               children: [
                 Container(
-                  color: Colors.lightBlue,
-                  child: Feed(),
+                    color: Colors.yellowAccent,
+                    child: ProfilePage(
+                      userId: googleSignIn.currentUser.id,
+                    )
                 ),
-                Container(color: Colors.white, child: SearchPage()),
+
+                Container(color: Colors.yellowAccent, child: SearchPage()),
                 Container(
-                  color: Colors.white,
+                  color: Colors.yellowAccent,
                   child: Uploader(),
                 ),
                 Container(
-                    color: Colors.white, child: ActivityFeedPage()),
+                    color: Colors.yellowAccent, child: ActivityFeedPage()
+                ),
                 Container(
-                    color: Colors.white,
-                    child: ProfilePage(
-                      userId: googleSignIn.currentUser.id,
-                    )),
+                  color: Colors.lightBlue,
+                  child: Feed(),
+                ),
+
               ],
               controller: pageController,
               physics: NeverScrollableScrollPhysics(),
